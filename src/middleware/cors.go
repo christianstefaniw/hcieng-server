@@ -13,7 +13,7 @@ func Cors() gin.HandlerFunc {
 	if hciengserver.DEBUG {
 		origin = "http://localhost:3000"
 	} else {
-		origin = "https://hcieng.xyz"
+		origin = "https://www.hcieng.xyz"
 	}
 
 	return cors.New(cors.Config{
