@@ -1,6 +1,7 @@
 package router
 
 import (
+	"hciengserver/src/apps/account"
 	"hciengserver/src/apps/auth"
 	"hciengserver/src/apps/email"
 	"hciengserver/src/middleware"
@@ -16,6 +17,7 @@ func InitRouter() *gin.Engine {
 
 	email.RegisterEmailRoutes(router)
 	auth.RegisterEmailRoutes(router)
+	account.RegisterAccountRoutes(router)
 
 	return router
 }
