@@ -1,7 +1,23 @@
 package hciengserver
 
-const (
-	DEBUG = false
-	PORT  = "8080"
-	EMAIL = "humbersideci.eng@gmail.com"
+import "os"
+
+var (
+	JWT_SECRET = []byte(os.Getenv("JWT_SECRET"))
+	DOMAIN     string
 )
+
+const (
+	DEBUG   = true
+	PORT    = "8080"
+	EMAIL   = "humbersideci.eng@gmail.com"
+	DB_NAME = "hciengonline"
+)
+
+func InitSettings() {
+	if DEBUG {
+		DOMAIN = "http://localhost:3000"
+	} else {
+		DOMAIN = "www.hcieng.xyz"
+	}
+}

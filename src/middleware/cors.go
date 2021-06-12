@@ -8,16 +8,8 @@ import (
 )
 
 func Cors() gin.HandlerFunc {
-	var origin string
-
-	if hciengserver.DEBUG {
-		origin = "http://localhost:3000"
-	} else {
-		origin = "https://www.hcieng.xyz"
-	}
-
 	return cors.New(cors.Config{
-		AllowOrigins:     []string{origin},
+		AllowOrigins:     []string{hciengserver.DOMAIN},
 		AllowMethods:     []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
 		AllowHeaders:     []string{"X-Requested-With", "Content-Type"},
