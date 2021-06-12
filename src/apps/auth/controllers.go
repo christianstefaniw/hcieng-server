@@ -24,5 +24,20 @@ func login(c *gin.Context) {
 		return
 	}
 
+	tkn, err := services.MakeJWT(claims.Email)
+	if err != nil {
+		c.AbortWithError(http.StatusForbidden, err)
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:     "authtoken",
+		Value:    tkn,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+	}
+	http.SetCookie(c.Writer, cookie)
+
 	c.JSON(http.StatusOK, claims)
 }
