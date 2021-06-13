@@ -10,8 +10,8 @@ import (
 )
 
 type Account struct {
-	EmailAddr string `json:"email"`
-	Pass      string `json:"pass"`
+	EmailAddr string `json:"email" bson:"email"`
+	Pass      string `json:"pass" bson:"pass"`
 }
 
 func GetAccount(email string) (*Account, error) {

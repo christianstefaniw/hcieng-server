@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	accounts "hciengserver/src/apps/account/services"
 	bodyData "hciengserver/src/apps/auth/body_data"
 	"hciengserver/src/apps/auth/services"
-	"hciengserver/src/constants"
 	"hciengserver/src/jwt"
 	"net/http"
 
@@ -13,9 +13,6 @@ import (
 )
 
 func Login(c *gin.Context) {
-
-	var err error
-
 	loginData := bodyData.NewLoginData()
 
 	c.ShouldBindJSON(&loginData)
@@ -29,6 +26,7 @@ func Login(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+	fmt.Println("ok")
 
 	tkn, err := jwt.MakeJWT(userAccount.EmailAddr)
 	if err != nil {
@@ -36,14 +34,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	cookie := &http.Cookie{
-		Name:     "authtoken",
-		Value:    tkn,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-	}
-	http.SetCookie(c.Writer, cookie)
+	jwt.SetCookie(c, tkn)
 
 	c.JSON(http.StatusOK, userAccount)
 }
@@ -55,18 +46,15 @@ func getAccount(loginData bodyData.LoginData) (*accounts.Account, error) {
 	if loginData.HasJwt() {
 		userAccount, err = services.OauthLogin(loginData.GoogleJWT)
 		if err != nil {
-			if constants.NO_DOC_FOUND_ERR == err.Error() {
+			if accounts.AccountIsAbsent(err) {
 				return nil, errors.New("unauthorized")
 			}
 			return nil, err
 		}
 	} else {
-		ok, err := services.Login(loginData.Account)
+		userAccount, err = services.Login(loginData)
 		if err != nil {
 			return nil, err
-		}
-		if !ok {
-			return nil, errors.New("unauthorized")
 		}
 	}
 

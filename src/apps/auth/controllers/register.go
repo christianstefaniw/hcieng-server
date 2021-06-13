@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	bodyData "hciengserver/src/apps/auth/body_data"
 	"hciengserver/src/apps/auth/services"
 	"hciengserver/src/jwt"
@@ -16,6 +17,9 @@ func Register(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+
+	fmt.Println(registerData.EmailAddr)
+
 	err := services.AddAccountToDb(registerData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -27,14 +31,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	cookie := &http.Cookie{
-		Name:     "authtoken",
-		Value:    tkn,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-	}
-	http.SetCookie(c.Writer, cookie)
+	jwt.SetCookie(c, tkn)
 
 	c.JSON(http.StatusOK, registerData)
 }

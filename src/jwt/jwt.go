@@ -2,8 +2,10 @@ package jwt
 
 import (
 	"hciengserver/src/hciengserver"
+	"net/http"
 
 	googleAuthIDTokenVerifier "github.com/futurenda/google-auth-id-token-verifier"
+	"github.com/gin-gonic/gin"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -34,4 +36,15 @@ func ValidateGoogleJWT(tokenString string) (*googleAuthIDTokenVerifier.ClaimSet,
 	}
 
 	return claimSet, nil
+}
+
+func SetCookie(c *gin.Context, tkn string) {
+	cookie := &http.Cookie{
+		Name:     "authtoken",
+		Value:    tkn,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+	}
+	http.SetCookie(c.Writer, cookie)
 }
