@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	account "hciengserver/src/apps/account/services"
 	"hciengserver/src/hciengserver"
 	"net/http"
 
@@ -43,6 +44,12 @@ func WithAuth() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user", reqClaims.Email)
+		c.Set("user", accountFromClaims(reqClaims))
+	}
+}
+
+func accountFromClaims(newClaims *claims) *account.Account {
+	return &account.Account{
+		EmailAddr: newClaims.Email,
 	}
 }

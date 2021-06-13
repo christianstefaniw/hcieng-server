@@ -9,10 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var mongoClient *mongo.Client
+type mongoConn mongo.Client
 
-func GetMongoDBClient() *mongo.Client {
+var mongoClient *mongoConn
+
+func GetMongoDBConn() *mongoConn {
 	return mongoClient
+}
+
+func (conn *mongoConn) Client() *mongo.Client {
+	client := mongo.Client(*conn)
+	return &client
 }
 
 func Connect() {
@@ -30,5 +37,6 @@ func Connect() {
 		log.Fatal(err)
 	}
 
-	mongoClient = client
+	mongoConnFromClient := mongoConn(*client)
+	mongoClient = &mongoConnFromClient
 }

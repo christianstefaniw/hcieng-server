@@ -1,7 +1,11 @@
 package account
 
-import "github.com/gin-gonic/gin"
+import (
+	account "hciengserver/src/apps/account/services"
+
+	"github.com/gin-gonic/gin"
+)
 
 func accountInfo(c *gin.Context) {
-	c.Writer.Write([]byte(c.Keys["user"].(string)))
+	c.Writer.Write([]byte(c.Keys["user"].(*account.Account).EmailAddr))
 }

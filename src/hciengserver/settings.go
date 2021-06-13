@@ -8,10 +8,11 @@ var (
 )
 
 const (
-	DEBUG   = true
-	PORT    = "8080"
-	EMAIL   = "humbersideci.eng@gmail.com"
-	DB_NAME = "hciengonline"
+	DEBUG        = true
+	PORT         = "8080"
+	EMAIL        = "humbersideci.eng@gmail.com"
+	DB_NAME      = "hciengonline"
+	ACCOUNT_COLL = "accounts"
 )
 
 func InitSettings() {
