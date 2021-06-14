@@ -12,6 +12,20 @@ import (
 type Account struct {
 	EmailAddr string `json:"email" bson:"email"`
 	Pass      string `json:"pass" bson:"pass"`
+	Admin     bool   `json:"admin" bson:"admin"`
+}
+
+func CreateAccount(email, pass string, isAdmin bool) *Account {
+	return &Account{
+		EmailAddr: email,
+		Pass:      pass,
+		Admin:     isAdmin,
+	}
+}
+
+// set default configurations for an account
+func SetDefaults(account *Account) {
+	account.Admin = false
 }
 
 func GetAccount(email string) (*Account, error) {

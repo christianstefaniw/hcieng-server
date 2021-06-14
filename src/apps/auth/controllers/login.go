@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	accounts "hciengserver/src/apps/account/services"
 	bodyData "hciengserver/src/apps/auth/body_data"
 	"hciengserver/src/apps/auth/services"
@@ -26,7 +25,6 @@ func Login(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	fmt.Println("ok")
 
 	tkn, err := jwt.MakeJWT(userAccount.EmailAddr)
 	if err != nil {
@@ -39,6 +37,8 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, userAccount)
 }
 
+// this function takes some [loginData] (email and password or Google JWT) and
+// retrieves the related account from the database
 func getAccount(loginData bodyData.LoginData) (*accounts.Account, error) {
 	var userAccount *accounts.Account
 	var err error
