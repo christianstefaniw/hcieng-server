@@ -52,20 +52,20 @@ func addAccountToDb(accountData *account.Account) (*mongo.InsertOneResult, error
 }
 
 // add email data to registration if there is a jwt (meaning oauth was used)
-// or generate a password hash of standard login was used
+// or generate a password hash if standard login was used
 func genMissingInfo(registerData bodyData.RegisterData) (bodyData.RegisterData, error) {
-	if !registerData.HasJwt() {
-		hash, err := bcrypt.GenerateFromPassword([]byte(registerData.Pass), 5)
-		if err != nil {
-			return registerData, err
-		}
-		registerData.Pass = string(hash)
-	} else {
+	if registerData.HasJwt() {
 		claims, err := getClaims(registerData.GoogleJWT)
 		if err != nil {
 			return registerData, err
 		}
 		registerData.EmailAddr = claims.Email
+	} else {
+		hash, err := bcrypt.GenerateFromPassword([]byte(registerData.Pass), 5)
+		if err != nil {
+			return registerData, err
+		}
+		registerData.Pass = string(hash)
 	}
 	return registerData, nil
 }
