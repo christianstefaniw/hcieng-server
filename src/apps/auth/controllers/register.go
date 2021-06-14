@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	bodyData "hciengserver/src/apps/auth/body_data"
 	"hciengserver/src/apps/auth/services"
 	"hciengserver/src/jwt"
@@ -18,9 +17,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(registerData.EmailAddr)
-
-	err := services.AddAccountToDb(registerData)
+	err := services.AddNewRegisterToDb(registerData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
