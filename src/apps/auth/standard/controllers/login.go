@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	bodyData "hciengserver/src/apps/auth/body_data"
-	"hciengserver/src/apps/auth/services"
+	"hciengserver/src/apps/account/services"
+	accounts "hciengserver/src/apps/account/services"
 	"hciengserver/src/jwt"
 	"net/http"
 
@@ -10,11 +10,13 @@ import (
 )
 
 func Login(c *gin.Context) {
-	loginData := bodyData.NewLoginData()
+	loginData := new(accounts.Account)
 
-	c.ShouldBindJSON(&loginData)
+	if err := c.ShouldBindJSON(&loginData); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+	}
 
-	userAccount, err := services.GetAccount(loginData)
+	userAccount, err := services.GetAccount(loginData.EmailAddr)
 	if err != nil {
 		if err.Error() == "unauthorized" {
 			c.AbortWithError(http.StatusUnauthorized, err)

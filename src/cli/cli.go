@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	accounts "hciengserver/src/apps/account/services"
-	auth "hciengserver/src/apps/auth/services"
+	auth "hciengserver/src/apps/auth/standard/services"
 	"hciengserver/src/database"
 	"hciengserver/src/hciengserver"
 	"hciengserver/src/helpers"
@@ -19,7 +19,7 @@ func init() {
 
 func createAccount(email, pass string, isAdmin bool) {
 	newAccount := accounts.CreateAccount(email, pass, isAdmin)
-	err := auth.ValidateAndAddAccountToDb(newAccount)
+	err := auth.AddNewRegisterToDb(newAccount)
 	if err != nil {
 		log.Fatal("error adding account to db: ", err)
 	}

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	bodyData "hciengserver/src/apps/auth/body_data"
-	"hciengserver/src/apps/auth/services"
+	accounts "hciengserver/src/apps/account/services"
+	"hciengserver/src/apps/auth/standard/services"
 	"hciengserver/src/jwt"
 	"net/http"
 
@@ -10,7 +10,7 @@ import (
 )
 
 func Register(c *gin.Context) {
-	registerData := bodyData.NewRegisterData()
+	registerData := new(accounts.Account)
 
 	if err := c.BindJSON(&registerData); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
