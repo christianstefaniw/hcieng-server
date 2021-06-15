@@ -12,7 +12,7 @@ import (
 func Register(c *gin.Context) {
 	registerData := new(accounts.Account)
 
-	if err := c.BindJSON(&registerData); err != nil {
+	if err := c.BindJSON(registerData); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

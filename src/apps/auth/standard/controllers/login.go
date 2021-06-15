@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"hciengserver/src/apps/account/services"
 	accounts "hciengserver/src/apps/account/services"
+	"hciengserver/src/apps/auth/standard/services"
 	"hciengserver/src/jwt"
 	"net/http"
 
@@ -16,7 +16,7 @@ func Login(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	userAccount, err := services.GetAccount(loginData.EmailAddr)
+	userAccount, err := services.GetAccount(loginData)
 	if err != nil {
 		if err.Error() == "unauthorized" {
 			c.AbortWithError(http.StatusUnauthorized, err)

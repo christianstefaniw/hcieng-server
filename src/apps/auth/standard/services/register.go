@@ -6,8 +6,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// adds the account data present in the register data (from request body)
-// to the database. if the register data contains a jwt it will add the claims to the db
 func AddNewRegisterToDb(registerData *account.Account) error {
 	var err error
 
