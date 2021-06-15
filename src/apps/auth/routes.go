@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterEmailRoutes(router *gin.Engine) {
+func RegisterAuthRoutes(router *gin.Engine) {
 	api := router.Group("/auth")
 	api.POST("login", standard.Login)
 	api.POST("login/google", oauth.GoogleAuthLogin)

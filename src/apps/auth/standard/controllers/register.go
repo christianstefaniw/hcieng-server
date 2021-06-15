@@ -22,7 +22,7 @@ func Register(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 
-	tkn, err := jwt.MakeJWT(registerData.EmailAddr)
+	tkn, err := jwt.MakeJWT(registerData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

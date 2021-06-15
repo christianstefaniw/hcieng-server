@@ -10,7 +10,7 @@ import (
 )
 
 type claims struct {
-	Email string `json:"email"`
+	*account.Account
 	jwt.StandardClaims
 }
 
@@ -50,6 +50,8 @@ func WithAuth() gin.HandlerFunc {
 
 func accountFromClaims(newClaims *claims) *account.Account {
 	return &account.Account{
-		EmailAddr: newClaims.Email,
+		EmailAddr: newClaims.EmailAddr,
+		FirstName: newClaims.FirstName,
+		LastName:  newClaims.LastName,
 	}
 }

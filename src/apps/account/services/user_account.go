@@ -13,14 +13,18 @@ import (
 
 type Account struct {
 	EmailAddr string `json:"email" bson:"email"`
+	FirstName string `json:"first" bson:"first"`
+	LastName  string `json:"last" bson:"last"`
 	Pass      string `json:"pass" bson:"pass"`
 	Admin     bool   `json:"admin" bson:"admin"`
 }
 
-func CreateAccount(email, pass string, isAdmin bool) *Account {
+func CreateAccount(email, pass, first, last string, isAdmin bool) *Account {
 	return &Account{
 		EmailAddr: email,
 		Pass:      pass,
+		FirstName: first,
+		LastName:  last,
 		Admin:     isAdmin,
 	}
 }

@@ -1,7 +1,9 @@
 package services
 
 import (
+	"errors"
 	accounts "hciengserver/src/apps/account/services"
+	"hciengserver/src/helpers"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,7 +24,10 @@ func verifyUserCreds(accountToValidate *accounts.Account) (*accounts.Account, er
 
 	err = bcrypt.CompareHashAndPassword([]byte(accountInDb.Pass), []byte(accountToValidate.Pass))
 	if err != nil {
-		return nil, nil
+		if err.Error() == "crypto/bcrypt: hashedPassword is not the hash of the given password" {
+			return nil, errors.New("unauthorized")
+		}
+		return nil, err
 	}
 
 	return accountInDb, nil
@@ -31,6 +36,10 @@ func verifyUserCreds(accountToValidate *accounts.Account) (*accounts.Account, er
 // this function takes some [loginData] (email and password or Google JWT) and
 // retrieves the related account from the database
 func GetAccount(loginData *accounts.Account) (*accounts.Account, error) {
+	if helpers.IsEmptyStr(loginData.Pass) {
+		return nil, errors.New("unauthorized")
+	}
+
 	userAccount, err := login(loginData)
 	if err != nil {
 		return nil, err

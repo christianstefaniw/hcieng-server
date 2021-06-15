@@ -30,7 +30,7 @@ func GoogleAuthLogin(c *gin.Context) {
 		return
 	}
 
-	tkn, err := jwt.MakeJWT(userAccount.EmailAddr)
+	tkn, err := jwt.MakeJWT(userAccount)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -52,13 +52,15 @@ func GoogleAuthRegister(c *gin.Context) {
 	registerData, err := getRegisterDataFromGoogleJwt(googleOauthToken.GoogleJWT)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
 	if err := accounts.ValidateAndAddAccountToDb(registerData); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
-	tkn, err := jwt.MakeJWT(registerData.EmailAddr)
+	tkn, err := jwt.MakeJWT(registerData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

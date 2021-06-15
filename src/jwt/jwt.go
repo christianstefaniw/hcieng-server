@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	accounts "hciengserver/src/apps/account/services"
 	"hciengserver/src/hciengserver"
 	"net/http"
 
@@ -10,9 +11,12 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func MakeJWT(email string) (string, error) {
+func MakeJWT(accont *accounts.Account) (string, error) {
 	tkn := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": email,
+		"email":   accont.EmailAddr,
+		"first":   accont.FirstName,
+		"last":    accont.LastName,
+		"isadmin": accont.Admin,
 	})
 
 	signedTkn, err := tkn.SignedString(hciengserver.JWT_SECRET)
@@ -45,6 +49,7 @@ func SetCookie(c *gin.Context, tkn string) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 	}
 	http.SetCookie(c.Writer, cookie)
 }

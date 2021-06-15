@@ -16,7 +16,7 @@ func InitRouter() *gin.Engine {
 	router.Use(middleware.Cors())
 
 	email.RegisterEmailRoutes(router)
-	auth.RegisterEmailRoutes(router)
+	auth.RegisterAuthRoutes(router)
 	account.RegisterAccountRoutes(router)
 
 	return router
