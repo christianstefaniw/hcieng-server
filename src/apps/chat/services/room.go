@@ -25,6 +25,12 @@ type Room struct {
 	cancel     context.CancelFunc
 }
 
+// omit fields that are not loaded when all rooms are loaded
+type MinRoomData struct {
+	Id   primitive.ObjectID `json:"id" bson:"_id"`
+	Name string             `json:"name"`
+}
+
 var activeRooms sync.Map
 
 func GetRoom(id string) (*Room, bool) {
@@ -57,7 +63,7 @@ func (r *Room) save() error {
 }
 
 func (r *Room) saveToActiveRooms() {
-	activeRooms.LoadOrStore(r.Id, r)
+	activeRooms.LoadOrStore(r.Id.Hex(), r)
 }
 
 func (r *Room) saveToDb() error {
@@ -111,8 +117,10 @@ func (r *Room) Serve() {
 	for {
 		select {
 		case msg := <-r.broadcast:
+			fmt.Println(msg)
 			if err := r.saveMessage(msg); err == nil {
 				for c := range r.clients {
+					fmt.Println("ok")
 					c.msg <- msg
 				}
 			} else {

@@ -90,6 +90,10 @@ func (c *client) write(errChan chan error) {
 					json.NewEncoder(w).Encode(<-c.msg)
 				}
 			}
+
+			if err := w.Close(); err != nil {
+				c.cancel()
+			}
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {

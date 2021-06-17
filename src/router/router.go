@@ -3,6 +3,7 @@ package router
 import (
 	"hciengserver/src/apps/account"
 	"hciengserver/src/apps/auth"
+	"hciengserver/src/apps/chat"
 	"hciengserver/src/apps/email"
 	"hciengserver/src/middleware"
 
@@ -18,6 +19,7 @@ func InitRouter() *gin.Engine {
 	email.RegisterEmailRoutes(router)
 	auth.RegisterAuthRoutes(router)
 	account.RegisterAccountRoutes(router)
+	chat.RegisterChatRoutes(router)
 
 	return router
 }

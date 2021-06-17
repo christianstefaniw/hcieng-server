@@ -1,16 +1,20 @@
 package middleware
 
 import (
-	account "hciengserver/src/apps/account/services"
+	"context"
+	accounts "hciengserver/src/apps/account/services"
+	"hciengserver/src/database"
 	"hciengserver/src/hciengserver"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type claims struct {
-	*account.Account
+	Id string
 	jwt.StandardClaims
 }
 
@@ -44,14 +48,34 @@ func WithAuth() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user", accountFromClaims(reqClaims))
+		user, err := retrieveUserData(reqClaims.Id)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		c.Set("user", user)
 	}
 }
 
-func accountFromClaims(newClaims *claims) *account.Account {
-	return &account.Account{
-		EmailAddr: newClaims.EmailAddr,
-		FirstName: newClaims.FirstName,
-		LastName:  newClaims.LastName,
+func retrieveUserData(id string) (*accounts.Account, error) {
+	objId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
 	}
+
+	var userData accounts.Account
+	query := bson.M{
+		"_id": objId,
+	}
+	err = database.GetMongoDBConn().Client().
+		Database(hciengserver.DB_NAME).
+		Collection(hciengserver.ACCOUNT_COLL).
+		FindOne(context.Background(), query).
+		Decode(&userData)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userData, nil
 }

@@ -14,7 +14,7 @@ import (
 )
 
 func AllUserRooms(c *gin.Context) {
-	var allRooms []*services.Room
+	var allMinRooms []*services.MinRoomData
 
 	user, ok := c.Get("user")
 	if !ok {
@@ -23,7 +23,7 @@ func AllUserRooms(c *gin.Context) {
 	}
 
 	for _, rmId := range user.(*accounts.Account).Rooms {
-		var rm services.Room
+		var rm services.MinRoomData
 		query := bson.M{
 			"_id": rmId,
 		}
@@ -31,8 +31,8 @@ func AllUserRooms(c *gin.Context) {
 			Database(hciengserver.DB_NAME).
 			Collection(hciengserver.ROOMS_COLL).
 			FindOne(context.Background(), query).Decode(&rm)
-		allRooms = append(allRooms, &rm)
+		allMinRooms = append(allMinRooms, &rm)
 	}
 
-	c.JSON(http.StatusOK, allRooms)
+	c.JSON(http.StatusOK, allMinRooms)
 }

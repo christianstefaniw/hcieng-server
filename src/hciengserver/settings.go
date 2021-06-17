@@ -1,6 +1,8 @@
 package hciengserver
 
-import "os"
+import (
+	"os"
+)
 
 var (
 	JWT_SECRET = []byte(os.Getenv("JWT_SECRET"))

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"hciengserver/src/hciengserver"
 
 	"github.com/gin-contrib/cors"
@@ -9,7 +8,6 @@ import (
 )
 
 func Cors() gin.HandlerFunc {
-	fmt.Println("ok")
 	return cors.New(cors.Config{
 		AllowOrigins:     []string{hciengserver.DOMAIN},
 		AllowMethods:     []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"},

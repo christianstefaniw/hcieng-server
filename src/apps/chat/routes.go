@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterAuthRoutes(router *gin.Engine) {
+func RegisterChatRoutes(router *gin.Engine) {
 	api := router.Group("/chat")
 	api.Use(middleware.WithAuth())
 

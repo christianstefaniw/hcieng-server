@@ -11,12 +11,9 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func MakeJWT(accont *accounts.Account) (string, error) {
+func MakeJWT(account *accounts.Account) (string, error) {
 	tkn := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email":   accont.EmailAddr,
-		"first":   accont.FirstName,
-		"last":    accont.LastName,
-		"isadmin": accont.Admin,
+		"id": account.Id.Hex(),
 	})
 
 	signedTkn, err := tkn.SignedString(hciengserver.JWT_SECRET)
