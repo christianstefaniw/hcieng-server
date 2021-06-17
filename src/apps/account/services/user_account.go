@@ -8,24 +8,29 @@ import (
 	"hciengserver/src/hciengserver"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Account struct {
-	EmailAddr string `json:"email" bson:"email"`
-	FirstName string `json:"first" bson:"first"`
-	LastName  string `json:"last" bson:"last"`
-	Pass      string `json:"pass" bson:"pass"`
-	Admin     bool   `json:"admin" bson:"admin"`
+	Id        primitive.ObjectID   `json:"id" bson:"_id"`
+	EmailAddr string               `json:"email" bson:"email"`
+	FirstName string               `json:"first" bson:"first"`
+	LastName  string               `json:"last" bson:"last"`
+	Pass      string               `json:"pass" bson:"pass"`
+	Admin     bool                 `json:"admin" bson:"admin"`
+	Rooms     []primitive.ObjectID `json:"rooms" bson:"rooms"`
 }
 
 func CreateAccount(email, pass, first, last string, isAdmin bool) *Account {
 	return &Account{
+		Id:        primitive.NewObjectID(),
 		EmailAddr: email,
 		Pass:      pass,
 		FirstName: first,
 		LastName:  last,
 		Admin:     isAdmin,
+		Rooms:     make([]primitive.ObjectID, 0),
 	}
 }
 
@@ -75,4 +80,16 @@ func ValidateAndAddAccountToDb(newAcccount *Account) error {
 		return err
 	}
 	return errors.New("user already exists")
+}
+
+func (a *Account) AddRoom(id string) error {
+	query := bson.M{
+		"_id": a.Id,
+	}
+	update := bson.M{
+		"$push": bson.M{"rooms": id},
+	}
+
+	_, err := database.GetMongoDBConn().Client().Database(hciengserver.DB_NAME).Collection(hciengserver.ACCOUNT_COLL).UpdateOne(context.Background(), query, update)
+	return err
 }

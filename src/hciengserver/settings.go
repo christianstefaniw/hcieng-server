@@ -8,11 +8,13 @@ var (
 )
 
 const (
-	DEBUG        = true
-	PORT         = "8080"
-	EMAIL        = "humbersideci.eng@gmail.com"
-	DB_NAME      = "hciengonline"
-	ACCOUNT_COLL = "accounts"
+	DEBUG             = true
+	PORT              = "8080"
+	EMAIL             = "humbersideci.eng@gmail.com"
+	DB_NAME           = "hciengonline"
+	ACCOUNT_COLL      = "accounts"
+	ROOMS_COLL        = "rooms"
+	MUST_JOIN_ROOM_ID = "60ca58a68106e16d94efbdc6"
 )
 
 func InitSettings() {

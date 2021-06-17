@@ -67,6 +67,7 @@ func GoogleAuthRegister(c *gin.Context) {
 	}
 
 	jwt.SetCookie(c, tkn)
+	c.Set("user", registerData)
 
 	c.JSON(http.StatusOK, registerData)
 }

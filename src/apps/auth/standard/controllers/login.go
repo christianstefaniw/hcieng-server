@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	accounts "hciengserver/src/apps/account/services"
 	"hciengserver/src/apps/auth/standard/services"
 	"hciengserver/src/jwt"
@@ -17,8 +16,6 @@ func Login(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-
-	fmt.Println(loginData.Pass, "ok")
 
 	userAccount, err := services.GetAccount(loginData)
 	if err != nil {

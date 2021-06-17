@@ -36,7 +36,7 @@ func verifyUserCreds(accountToValidate *accounts.Account) (*accounts.Account, er
 // this function takes some [loginData] (email and password or Google JWT) and
 // retrieves the related account from the database
 func GetAccount(loginData *accounts.Account) (*accounts.Account, error) {
-	if helpers.IsEmptyStr(loginData.Pass) {
+	if helpers.IsEmptyStr(loginData.Pass) || helpers.IsEmptyStr(loginData.EmailAddr) {
 		return nil, errors.New("unauthorized")
 	}
 

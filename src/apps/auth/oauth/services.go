@@ -52,9 +52,5 @@ func getRegisterDataFromGoogleJwt(tkn string) (*accounts.Account, error) {
 }
 
 func registerDataFromOauthClaims(claims *googleAuthIDTokenVerifier.ClaimSet) *accounts.Account {
-	return &accounts.Account{
-		EmailAddr: claims.Email,
-		FirstName: claims.GivenName,
-		LastName:  claims.FamilyName,
-	}
+	return accounts.CreateAccount(claims.Email, "", claims.GivenName, claims.FamilyName, false)
 }
