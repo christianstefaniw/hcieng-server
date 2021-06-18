@@ -24,6 +24,6 @@ func InitSettings() {
 	if DEBUG {
 		DOMAIN = "http://localhost:3000"
 	} else {
-		DOMAIN = "www.hcieng.xyz"
+		DOMAIN = "https://www.hcieng.xyz"
 	}
 }
