@@ -19,9 +19,8 @@ type Room struct {
 	broadcast     chan *message
 	register      chan *client
 	unregister    chan *client
-	Name          string          `json:"name" bson:"name"`
-	Messages      []*message      `json:"messages" bson:"messages"`
-	JoinedClients map[string]bool `json:"joined_clients" bson:"joined_clients"`
+	Name          string     `json:"name" bson:"name"`
+	Messages      []*message `json:"messages" bson:"messages"`
 	ctx           context.Context
 	cancel        context.CancelFunc
 	AdminTextOnly bool `json:"admin_text_only" bson:"admin_text_only"`
@@ -53,7 +52,6 @@ func NewRoomAndStore(name string, adminTextOnly bool) (*Room, error) {
 		register:      make(chan *client),
 		unregister:    make(chan *client),
 		Messages:      make([]*message, 0),
-		JoinedClients: make(map[string]bool),
 		ctx:           ctx,
 		cancel:        cancel,
 		AdminTextOnly: adminTextOnly,
@@ -69,7 +67,7 @@ func (r *Room) addUserIdToRoom(id primitive.ObjectID) error {
 		"_id": r.Id,
 	}
 	update := bson.M{
-		"$push": bson.M{"clients": id},
+		"$push": bson.M{"joined_clients": id},
 	}
 	_, err := database.GetMongoDBConn().Client().Database(hciengserver.DB_NAME).Collection(hciengserver.ROOMS_COLL).UpdateOne(context.Background(), query, update)
 	return err
@@ -180,10 +178,6 @@ func JoinRoom(rmId string, user interface{}) {
 		Database(hciengserver.DB_NAME).
 		Collection(hciengserver.ROOMS_COLL).
 		FindOne(context.Background(), query).Decode(&roomData)
-
-	if ok := roomData.JoinedClients[user.(*accounts.Account).Id.Hex()]; !ok {
-		roomData.addUserIdToRoom(user.(*accounts.Account).Id)
-	}
 
 	roomData.saveToDb()
 }

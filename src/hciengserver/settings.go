@@ -10,7 +10,7 @@ var (
 )
 
 const (
-	DEBUG                 = true
+	DEBUG                 = false
 	PORT                  = "8080"
 	EMAIL                 = "humbersideci.eng@gmail.com"
 	DB_NAME               = "hciengonline"
