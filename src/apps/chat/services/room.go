@@ -14,15 +14,17 @@ import (
 )
 
 type Room struct {
-	Id         primitive.ObjectID `bson:"_id" json:"id"`
-	clients    map[*client]bool
-	broadcast  chan *message
-	register   chan *client
-	unregister chan *client
-	Name       string     `json:"name"`
-	Messages   []*message `json:"messages"`
-	ctx        context.Context
-	cancel     context.CancelFunc
+	Id            primitive.ObjectID `bson:"_id" json:"id"`
+	clients       map[*client]bool
+	broadcast     chan *message
+	register      chan *client
+	unregister    chan *client
+	Name          string          `json:"name" bson:"name"`
+	Messages      []*message      `json:"messages" bson:"messages"`
+	JoinedClients map[string]bool `json:"joined_clients" bson:"joined_clients"`
+	ctx           context.Context
+	cancel        context.CancelFunc
+	AdminTextOnly bool `json:"admin_text_only" bson:"admin_text_only"`
 }
 
 // omit fields that are not loaded when all rooms are loaded
@@ -33,28 +35,44 @@ type MinRoomData struct {
 
 var activeRooms sync.Map
 
-func GetRoom(id string) (*Room, bool) {
+func GetRoom(id string) *Room {
 	rm, ok := activeRooms.Load(id)
-	return rm.(*Room), ok
+	if !ok {
+		return nil
+	}
+	return rm.(*Room)
 }
 
-func NewRoomAndStore(name string) (*Room, error) {
+func NewRoomAndStore(name string, adminTextOnly bool) (*Room, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	rm := &Room{
-		Id:         primitive.NewObjectID(),
-		Name:       name,
-		clients:    make(map[*client]bool),
-		broadcast:  make(chan *message),
-		register:   make(chan *client),
-		unregister: make(chan *client),
-		Messages:   make([]*message, 0),
-		ctx:        ctx,
-		cancel:     cancel,
+		Id:            primitive.NewObjectID(),
+		Name:          name,
+		clients:       make(map[*client]bool),
+		broadcast:     make(chan *message),
+		register:      make(chan *client),
+		unregister:    make(chan *client),
+		Messages:      make([]*message, 0),
+		JoinedClients: make(map[string]bool),
+		ctx:           ctx,
+		cancel:        cancel,
+		AdminTextOnly: adminTextOnly,
 	}
 
 	err := rm.save()
 
 	return rm, err
+}
+
+func (r *Room) addUserIdToRoom(id primitive.ObjectID) error {
+	query := bson.M{
+		"_id": r.Id,
+	}
+	update := bson.M{
+		"$push": bson.M{"clients": id},
+	}
+	_, err := database.GetMongoDBConn().Client().Database(hciengserver.DB_NAME).Collection(hciengserver.ROOMS_COLL).UpdateOne(context.Background(), query, update)
+	return err
 }
 
 func (r *Room) save() error {
@@ -89,13 +107,13 @@ func (r *Room) InitAndServe() {
 	go r.Serve()
 }
 
-func (r *Room) CheckClientInRoom(email string) (*client, bool) {
+func (r *Room) CheckClientInRoom(email string) bool {
 	for roomClient := range r.clients {
 		if roomClient.EmailAddr == email {
-			return roomClient, true
+			return true
 		}
 	}
-	return nil, false
+	return false
 }
 
 func (r *Room) saveMessage(msg *message) error {
@@ -103,7 +121,12 @@ func (r *Room) saveMessage(msg *message) error {
 		"_id": r.Id,
 	}
 	update := bson.M{
-		"$push": bson.M{"messages": msg},
+		"$push": bson.M{
+			"messages": bson.M{
+				"$each":     []*message{msg},
+				"$position": 0,
+			},
+		},
 	}
 
 	_, err := database.GetMongoDBConn().
@@ -117,10 +140,8 @@ func (r *Room) Serve() {
 	for {
 		select {
 		case msg := <-r.broadcast:
-			fmt.Println(msg)
 			if err := r.saveMessage(msg); err == nil {
 				for c := range r.clients {
-					fmt.Println("ok")
 					c.msg <- msg
 				}
 			} else {
@@ -148,4 +169,21 @@ func JoinRoom(rmId string, user interface{}) {
 		Database(hciengserver.DB_NAME).
 		Collection(hciengserver.ACCOUNT_COLL).
 		UpdateOne(context.Background(), query, update)
+
+	query = bson.M{
+		"_id": rmId,
+	}
+
+	var roomData Room
+
+	database.GetMongoDBConn().Client().
+		Database(hciengserver.DB_NAME).
+		Collection(hciengserver.ROOMS_COLL).
+		FindOne(context.Background(), query).Decode(&roomData)
+
+	if ok := roomData.JoinedClients[user.(*accounts.Account).Id.Hex()]; !ok {
+		roomData.addUserIdToRoom(user.(*accounts.Account).Id)
+	}
+
+	roomData.saveToDb()
 }

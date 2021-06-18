@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	accounts "hciengserver/src/apps/account/services"
 	"hciengserver/src/helpers"
 
@@ -36,6 +37,7 @@ func verifyUserCreds(accountToValidate *accounts.Account) (*accounts.Account, er
 // this function takes some [loginData] (email and password or Google JWT) and
 // retrieves the related account from the database
 func GetAccount(loginData *accounts.Account) (*accounts.Account, error) {
+	fmt.Println(loginData.Pass)
 	if helpers.IsEmptyStr(loginData.Pass) || helpers.IsEmptyStr(loginData.EmailAddr) {
 		return nil, errors.New("unauthorized")
 	}

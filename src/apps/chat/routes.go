@@ -12,7 +12,7 @@ func RegisterChatRoutes(router *gin.Engine) {
 	api.Use(middleware.WithAuth())
 
 	api.POST("join/:id", controllers.JoinRoom)
-	api.GET("info/:id", controllers.RoomInfo)
+	api.GET("info/:id/:lower_msg_bound/:upper_msg_bound", controllers.RoomInfo)
 	api.GET("allrooms", controllers.AllUserRooms)
 	api.GET("room/:id", controllers.ServeRoom)
 	api.POST("newroom", controllers.NewRoom)

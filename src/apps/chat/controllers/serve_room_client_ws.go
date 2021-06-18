@@ -19,21 +19,26 @@ var upgrader = websocket.Upgrader{
 func ServeRoom(c *gin.Context) {
 	rmId := c.Param("id")
 
-	rm, ok := services.GetRoom(rmId)
+	user, ok := c.Get("user")
 	if !ok {
+		c.AbortWithError(http.StatusUnauthorized, errors.New("token not sent in request"))
+		return
+	}
+
+	rm := services.GetRoom(rmId)
+	if rm == nil {
 		c.AbortWithError(http.StatusNotFound, errors.New("room not active"))
+		return
+	}
+
+	if rm.CheckClientInRoom(user.(*accounts.Account).EmailAddr) {
+		c.AbortWithStatus(http.StatusAlreadyReported)
 		return
 	}
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	user, ok := c.Get("user")
-	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, errors.New("token not sent in request"))
 		return
 	}
 

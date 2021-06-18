@@ -18,6 +18,7 @@ func RegisterToMustJoinRoom() gin.HandlerFunc {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("token not sent in request"))
 			return
 		}
-		services.JoinRoom(hciengserver.MUST_JOIN_ROOM_ID, user)
+		services.JoinRoom(hciengserver.HCI_ENG_ROOM_ID, user)
+		services.JoinRoom(hciengserver.ANNOUNCEMENTS_ROOM_ID, user)
 	}
 }

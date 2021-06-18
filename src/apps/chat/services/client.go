@@ -31,7 +31,7 @@ func ServeWs(r *Room, user *accounts.Account, conn *websocket.Conn) {
 	ctx, cancel := context.WithCancel(context.Background())
 	c := &client{room: r, conn: conn, msg: make(chan *message, 256), ctx: ctx, cancel: cancel, Account: user}
 	c.room.register <- c
-	go c.doWork()
+	go c.doWork(r.AdminTextOnly)
 }
 
 func (c *client) unregister() {
@@ -105,10 +105,13 @@ func (c *client) write(errChan chan error) {
 	}
 }
 
-func (c *client) doWork() {
+func (c *client) doWork(adminTextOnly bool) {
 	errChan := make(chan error)
 	go c.read(errChan)
-	go c.write(errChan)
+
+	if !adminTextOnly || c.Admin {
+		go c.write(errChan)
+	}
 
 	for {
 		select {
@@ -120,6 +123,8 @@ func (c *client) doWork() {
 			c.unregister()
 			log.Printf("%s room closed", c.room.Id)
 			return
+		case err := <-errChan:
+			log.Printf("client error: %s", err)
 		}
 	}
 }

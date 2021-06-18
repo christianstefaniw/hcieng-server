@@ -20,7 +20,7 @@ func NewRoom(c *gin.Context) {
 		return
 	}
 
-	room, err := services.NewRoomAndStore(roomName.Name)
+	room, err := services.NewRoomAndStore(roomName.Name, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
