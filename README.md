@@ -15,4 +15,4 @@
 </div>
 
 
-    <p>* the site never really caught on so I'm going to leave it in it's current mvp state *</p>
+    * the site never really caught on so I'm going to leave it in it's current mvp state *
