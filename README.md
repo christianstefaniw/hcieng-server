@@ -12,4 +12,6 @@
     <a href="https://goreportcard.com/badge/github.com/hciengclub/hcieng-server">
         <img src="https://goreportcard.com/badge/github.com/hciengclub/hcieng-server">
     </a>
+
+    <p>* the site never really caught on so I'm going to leave it in it's current mvp state *</p>
 </div>
