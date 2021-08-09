@@ -12,6 +12,8 @@
     <a href="https://goreportcard.com/badge/github.com/hciengclub/hcieng-server">
         <img src="https://goreportcard.com/badge/github.com/hciengclub/hcieng-server">
     </a>
-    
-    <h1>The services that this server provides (auth and messages) are no longer needed to due lack of use so this project has been archived in its current MVP state </h1>
 </div>
+
+<div>
+    <h1>The services that this server provides (auth and messages) are no longer needed to due lack of use so this project has been archived in its current MVP state </h1>
+    </div>
