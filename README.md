@@ -15,5 +15,12 @@
 </div>
 
 <div>
-    <h3>The services that this server provides (auth and messages) are no longer needed to due lack of use so this project has been archived in its current MVP state </h3>
+    <p>The services that this server provides (auth and messages) are no longer needed to due lack of use so this project has been archived in its current MVP state </p>
     </div>
+
+
+## Features
+- Room based messaging using web sockets
+- Authentication
+- Create new rooms
+- Join rooms through room ID
