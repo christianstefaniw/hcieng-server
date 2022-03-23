@@ -21,6 +21,7 @@
 
 ## Features
 - Room based messaging using web sockets
-- Authentication
+- Google OAuth login and registration
+- Standard login and registration
 - Create new rooms
 - Join rooms through room ID
