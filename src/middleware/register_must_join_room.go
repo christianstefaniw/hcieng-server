@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// everyone must join certain rooms, so this function auto joins new registers
 func RegisterToMustJoinRoom() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
